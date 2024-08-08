@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Unificador de Señales</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tema oscuro personalizado -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-dark-5@1.0.0/dist/css/bootstrap-dark.min.css" rel="stylesheet">
+    <!-- Tu CSS personalizado -->
+    <link href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <header class="bg-primary text-white text-center py-3 mb-4">
+            <h1>Sistema Unificador de Señales</h1>
+        </header>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card bg-dark text-white mb-4">
+                    <div class="card-header">
+                        Panel de Control
+                    </div>
+                    <div class="card-body">
+                        <p>Abre nuevos sockets para otros tipos de señales:</p>
+                        <form>
+                            <div class="form-group">
+                                <label for="signalType">Tipo de Señal</label>
+                                <input type="text" class="form-control" id="signalType"
+                                    placeholder="Ingrese tipo de señal">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Abrir Socket</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card bg-dark text-white">
+                    <div class="card-header">
+                        Datos de Señal
+                    </div>
+                    <div class="card-body">
+                        <p>Aquí se mostrarán los datos de las señales recibidas.</p>
+                        <div id="signalData" class="alert alert-info" role="alert">
+                            Esperando datos...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Scripts de Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Tu JS personalizado -->
+    <script src="scripts.js"></script>
+</body>
+
+</html>

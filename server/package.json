@@ -1,0 +1,25 @@
+{
+  "name": "udm",
+  "version": "1.0.0",
+  "description": "una aplicación servidor en Node.js que recolecta señales bioeléctricas, incluyendo ondas cerebrales EEG (electroencefalografía), a través de un protocolo TCP. La aplicación captura, procesa y analiza las señales EEG, que son oscilaciones eléctricas generadas por la actividad neuronal en diferentes frecuencias, para su posterior estudio o aplicación en sistemas de neurofeedback y diagnóstico.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fenshu28/Servidor-UDM.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fenshu28/Servidor-UDM/issues"
+  },
+  "homepage": "https://github.com/Fenshu28/Servidor-UDM#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "nodemon": "^3.1.4",
+    "socket.io": "^4.7.5"
+  }
+}

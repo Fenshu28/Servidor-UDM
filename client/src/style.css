@@ -1,0 +1,23 @@
+body {
+    background-color: #343a40; /* Fondo oscuro */
+    color: #ffffff; /* Texto blanco */
+}
+
+.card {
+    border: 1px solid #007bff; /* Bordes azules */
+}
+
+.card-header {
+    background-color: #007bff; /* Cabecera azul */
+    color: #ffffff;
+}
+
+.btn-primary {
+    background-color: #007bff; /* Botón azul */
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Azul oscuro al pasar el mouse */
+    border-color: #0056b3;
+}
