@@ -2,108 +2,95 @@ import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
 const Dashboard = () => {
-    const [signalData, setSignalData] = useState('');
+    const [sockets, setSockets] = useState([]);
+    const [port, setPort] = useState('');
     const [socket, setSocket] = useState(null);
-    const [portNumber, setPortNumber] = useState('');
-    const [openSockets, setOpenSockets] = useState([]);
+    const [signals, setSignals] = useState({}); // Para almacenar señales por puerto
 
     useEffect(() => {
-        // Conectar al servidor de socket.io
-        const socketConnection = io('http://localhost:4000');
-        setSocket(socketConnection);
+        const newSocket = io('http://localhost:4000');
+        setSocket(newSocket);
 
-        // Manejar la recepción de datos
-        socketConnection.on('signalData', (data) => {
-            setSignalData(data);
+        newSocket.on('updateSockets', (openSockets) => {
+            setSockets(openSockets);
         });
 
-        // Manejar la actualización de sockets abiertos
-        socketConnection.on('updateSockets', (sockets) => {
-            setOpenSockets(sockets);
+        newSocket.on('signalData', (data) => {
+            const { port, signal } = JSON.parse(data); // Suponiendo que los datos vienen en formato JSON
+            setSignals((prevSignals) => ({
+                ...prevSignals,
+                [port]: (prevSignals[port] || []).concat(signal)
+            }));
         });
 
-        return () => {
-            socketConnection.disconnect();
-        };
-    }, []);
+        return () => newSocket.close();
+    }, [setSocket]);
 
     const handleOpenSocket = () => {
-        if (socket && portNumber) {
-            socket.emit('openSocket', portNumber);
+        if (socket) {
+            socket.emit('openSocket', port);
+            setPort('');
         }
     };
 
     const handleRemoveSocket = (port) => {
         if (socket) {
-            socket.emit('deleteSocket', port);
+            socket.emit('closeSocket', port);
+            setSignals((prevSignals) => {
+                const { [port]: removed, ...rest } = prevSignals;
+                return rest;
+            });
         }
     };
 
-    const handleInputChange = (event) => {
-        setPortNumber(event.target.value);
-    };
-
     return (
-        <div className="container-fluid">
-            <header className="bg-primary text-white text-center py-3 mb-4">
-                <h1>Sistema Unificador de Señales</h1>
-            </header>
-            <div className="row">
-                <div className="col-md-4">
-                    <div className="card bg-dark text-white mb-4">
-                        <div className="card-header">
-                            Panel de Control
-                        </div>
-                        <div className="card-body">
-                            <p>Abre nuevos sockets para otros tipos de señales:</p>
-                            <form>
-                                <div className="form-group">
-                                    <label htmlFor="portNumber">Número de Puerto</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        id="portNumber"
-                                        placeholder="Ingrese el número de puerto"
-                                        value={portNumber}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                                <button type="button" className="btn btn-primary" onClick={handleOpenSocket}>Abrir Socket</button>
-                            </form>
-                            <h5 className="mt-4">Sockets Abiertos</h5>
-                            <ul className="list-group">
-                                {openSockets.map((port, index) => (
-                                    <li key={index} className="list-group-item">
-                                        <div className='row'>
-                                        <div className='col-10'>
-                                            Puerto: {port}
-                                        </div>
-                                        <div className='col-2'>
-                                            <button
-                                                className="btn btn-danger btn-sm"
-                                                onClick={() => handleRemoveSocket(port)}
-                                                aria-label="Eliminar socket"
-                                            >
-                                                <i className="fas fa-trash"></i>
-                                            </button>
-                                        </div></div>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
+        <div className="container mt-4">
+            <div className="card">
+                <div className="card-header">
+                    <h5>Sistema Unificador de Señales</h5>
                 </div>
-                <div className="col-md-8">
-                    <div className="card bg-dark text-white">
-                        <div className="card-header">
-                            Datos de Señal
+                <div className="card-body">
+                    <p>Abre nuevos sockets para otros tipos de señales:</p>
+                    <form>
+                        <div className="form-group">
+                            <label htmlFor="port">Número de Puerto</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="port"
+                                value={port}
+                                onChange={(e) => setPort(e.target.value)}
+                                placeholder="Ingrese el número de puerto"
+                            />
                         </div>
-                        <div className="card-body">
-                            <p>Aquí se mostrarán los datos de las señales recibidas.</p>
-                            <div id="signalData" className="alert alert-info" role="alert">
-                                {signalData || 'Esperando datos...'}
+                        <button type="button" className="btn btn-primary mt-2" onClick={handleOpenSocket}>Abrir Socket</button>
+                    </form>
+                    <ul className="list-group mt-4">
+                        {sockets.map((port) => (
+                            <li key={port} className="list-group-item d-flex justify-content-between align-items-center">
+                                Puerto {port}
+                                <button
+                                    className="btn btn-danger btn-sm"
+                                    onClick={() => handleRemoveSocket(port)}
+                                    aria-label="Eliminar socket"
+                                >
+                                    <i className="fas fa-trash"></i>
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                    <div className="mt-4">
+                        <h5>Datos Recibidos:</h5>
+                        {sockets.map((port) => (
+                            <div key={port} className="mb-4">
+                                <h6>Puerto {port}</h6>
+                                <div className="border p-2">
+                                    {signals[port] ? signals[port].map((signal, index) => (
+                                        <p key={index}>{signal}</p>
+                                    )) : <p>No hay datos.</p>}
+                                </div>
                             </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>

@@ -38,9 +38,9 @@ socketIo.on('connection', (socket) => {
         const server = net.createServer((tcpSocket) => {
             tcpSocket.on('data', (data) => {
                 console.log('Datos recibidos:', data.toString());
-                socket.emit('signalData', data.toString());
+                socket.emit('signalData', JSON.stringify({ port: port, signal: data.toString() }));
             });
-        });
+        });        
 
         server.listen(port, () => {
             console.log(`Nuevo servidor TCP escuchando en el puerto ${port}`);
@@ -50,7 +50,7 @@ socketIo.on('connection', (socket) => {
         });
     });
 
-    socket.on('deleteSocket', (port) => {
+    socket.on('closeSocket', (port) => {
         // Cerrar el servidor TCP actual en ese puerto si existe
         if (tcpServers[port]) {
             tcpServers[port].close(() => {
